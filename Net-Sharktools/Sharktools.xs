@@ -27,7 +27,7 @@
  *     'ip.version eq 4',
  * );
  *
- * print Dumper $result[0];
+ * print Dumper $result->[0];
  */
 
 /*
