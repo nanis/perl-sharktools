@@ -226,7 +226,7 @@ perlshark_read_xs(filename, fieldnamelist, dfilter, ...)
 
         for (i = 0; i < nfields; ++i)
         {
-            SV **key = av_fetch((AV *) fieldnamelist, i, 0);
+            SV **key = av_fetch(fieldnamelist, i, 0);
             if ( key == NULL ) 
             {
                 g_free(keys);
