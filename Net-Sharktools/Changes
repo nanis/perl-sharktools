@@ -1,5 +1,12 @@
 Revision history for Perl extension Net::Sharktools.
 
+0.002 Tue Jan 25 10:46:49 2011
+    - Add copyright, license statement, and disclaimer of warranty to Sharktools.xs
+    - Make internal callbacks static
+    - Add comments to explain structure of module
+    - Add usage example to Sharktools.xs
+    - Remove unnecessary cast to (AV *)
+
 0.001 Thu Jan 20 19:35:45 2011 
 	- First public version
 

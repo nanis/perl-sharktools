@@ -1,3 +1,39 @@
+/* Copyright (c) 2011 The Perl Review, LLC
+ *
+ * This program is free software. You can modify it and/or distribute it under
+ * the terms of the Perl Artistic License 2.0 (see
+ * <http://www.perlfoundation.org/artistic_license_2_0>
+ *
+ * Disclaimer of Warranty: THE PACKAGE IS PROVIDED BY THE COPYRIGHT HOLDER AND
+ * CONTRIBUTORS "AS IS' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES. THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+ * NON-INFRINGEMENT ARE DISCLAIMED TO THE EXTENT PERMITTED BY YOUR LOCAL LAW.
+ * UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR CONTRIBUTOR WILL BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING IN
+ * ANY WAY OUT OF THE USE OF THE PACKAGE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+/* Perl interface to libsharktools
+ *
+ * Example invocation:
+ *
+ * use Data::Dumper;
+ * use Net::Sharktools qw( perlshark_read_xs );
+ *
+ * my $result = perlshark_read_xs(
+ *     'capture1.pcap',
+ *     [qw( frame.number tcp.seq frame.len udp.dstport ip.version )],
+ *     'ip.version eq 4',
+ * );
+ *
+ * print Dumper $result[0];
+ */
+
+/*
+ * Contact: A. Sinan Unur <nanis@cpan.org>
+ */
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -11,13 +47,52 @@
 
 #include "sharktools_core.h"
 
-gpointer
+/* Anatomy of the module
+ *
+ * This module provides the perlshark_read_xs function which uses the
+ * Sharktools library by Armen Babikyan. Sharktools can be found at
+ * <http://www.mit.edu/~armenb/sharktools/>.
+ *
+ * perlshark_read_xs invokes three callbacks as necessary. These are:
+ *
+ * cb_row_new : Creates the a new instance of the data structure that
+ * corresponds to a new row to be added to the list of rows returned. For Perl,
+ * this an anonymous hash.
+ *
+ * cb_row_add : Invokes the appropriate operation to append a newly created row
+ * to the end of the list of rows to be returned. For Perl, this is av_push.
+ *
+ * cb_row_set : Invokes the appropriate operation to set the value
+ * corresponding to a given key in the current row. For Perl, this is
+ * hv_store_ent
+ *
+ * The structure of the code is pretty much identical to the Python2 interface
+ * bundled with Sharktools (see pyshark.c). The main difference is that I
+ * maintain pointers to the elements of the arrayref of field names passed to
+ * perlshark_read_xs rather than creating a fresh array for keys. Given that
+ * hv_store_ent only reads the keys and does not modify reference counts, this
+ * takes away one hassle and only the memory allocated for the array of
+ * pointers to the original members of the arrayref passed to
+ * perlshark_read_xs needs to be freed in clean up.
+ *
+ * I set up the array of field names to be passed to sharktools_get_cb and the
+ * array of pointers to the field names in one pass.
+ *
+ * 64-bit values are returned as strings due to my concern for portability
+ * (which may not be well founded).
+ *
+ * Absolute and relative time values are also returned as strings, mainly due
+ * to my ignorance of the best way to handle those. Suggestions welcome.
+ *
+ */
+
+static gpointer
 cb_row_new(sharktools_callbacks *cb)
 {
     return newHV();
 }
 
-gpointer
+static gpointer
 cb_row_add(sharktools_callbacks *cb, gpointer row)
 {
     AV *list = cb->root;
@@ -25,7 +100,7 @@ cb_row_add(sharktools_callbacks *cb, gpointer row)
     return NULL;    
 }
 
-gpointer
+static gpointer
 cb_row_set
 (
     sharktools_callbacks *cb,
@@ -215,6 +290,7 @@ perlshark_read_xs(filename, fieldnamelist, dfilter, ...)
                     g_free(fieldnames[i]);
                 }
                 g_free(fieldnames);
+                g_free(keys);
                 croak("Failed to fetch field name %d", i);
             }
 
@@ -222,18 +298,8 @@ perlshark_read_xs(filename, fieldnamelist, dfilter, ...)
             fieldnames[i] = g_new(gchar, len + 1);
             strncpy(fieldnames[i], SvPV_nolen(*name), len);
             fieldnames[i][len] = 0;
-        }
 
-        for (i = 0; i < nfields; ++i)
-        {
-            SV **key = av_fetch(fieldnamelist, i, 0);
-            if ( key == NULL ) 
-            {
-                g_free(keys);
-                croak("Failed to fetch field name %d", i);
-            }
-
-            keys[i] = *key;
+            keys[i] = *name;
         }
 
         cb.root = (gpointer) results;
