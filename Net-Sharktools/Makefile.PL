@@ -8,6 +8,7 @@ use Devel::CheckLib;
 # No support for Win32 yet
 die "OS unsupported\n" if $^O eq 'MSWin32';
 
+use Config;
 use File::Spec::Functions qw( catfile );
 use Getopt::Long;
 
@@ -22,16 +23,16 @@ GetOptions(
 
 unless ( defined $argv{'sharktools-src'} ) {
     $argv{'sharktools-src'} = catfile(
-        $ENV{HOME}, qw(sharktools sharktools-0.1.5 src) );
+        $ENV{HOME}, qw(shark sharktools-0.1.5 src) );
 }
 
 unless ( defined $argv{'wireshark-src'} ) {
     $argv{'wireshark-src'} = catfile(
-        $ENV{HOME}, qw(sharktools wireshark-1.4.2) );
+        $ENV{HOME}, qw(shark wireshark-1.4.3) );
 }
 
 unless ( defined $argv{'lib-path'} ) {
-    $argv{'lib-path'} = [ qw( /usr/lib ) ];
+    $argv{'lib-path'} = [ split(' ', $Config{libpth}) ];
 }
 
 unless ( defined $argv{'inc-path'} ) {
@@ -41,12 +42,11 @@ unless ( defined $argv{'inc-path'} ) {
     )];
 }
 
-my @LIBS = qw(sharktools glib-2.0 wireshark wiretap wsutil);
-my @HEADERS = qw(glib.h sharktools_core.h epan/ftypes/ftypes.h);
+check_all_libs_or_exit(\%argv);
 
 my $LIBS = join ' ', (
     (map "-L$_", $argv{'sharktools-src'}, @{ $argv{'lib-path'} }),
-    (map "-l$_", @LIBS),
+    (map "-l$_", qw(sharktools glib-2.0 wireshark wiretap wsutil)),
 );
 
 my $INC = join ' ', (map "-I$_", 
@@ -56,26 +56,15 @@ my $INC = join ' ', (map "-I$_",
     $argv{'sharktools-src'},
 );
 
-# Check some canaries to see if we have the required environment
-
-check_lib_or_exit(
-    lib => \@LIBS,
-    header => \@HEADERS,
-    LIBS => $LIBS,
-    INC => $INC,
-);
-
-
-
-
-
 WriteMakefile(
     NAME              => 'Net::Sharktools',
     VERSION_FROM      => 'lib/Net/Sharktools.pm',
 
     BUILD_REQUIRES    => {
+        'Config'                => 0,
         'File::Spec::Functions' => 0,
         'Getopt::Long'          => 0,
+        'YAML'                  => 0,
     },
 
     PREREQ_PM         => {},
@@ -92,3 +81,43 @@ WriteMakefile(
     
     INC               => $INC,
 );
+
+sub check_all_libs_or_exit {
+    my ($argv) = @_;
+
+    my $sharktools_src = $argv->{'sharktools-src'};
+    my $wireshark_src  = $argv->{'wireshark-src'};
+    my @inc = @{ $argv->{'inc-path'} };
+    my @lib = @{ $argv->{'lib-path'} };
+
+    check_lib_or_exit(
+        function => qq{
+            #include <string.h>
+            return strcmp(PACKAGE, "wireshark");
+        },
+        header => [qw( config.h )],
+        incpath => $wireshark_src, 
+    );
+
+    check_lib_or_exit(
+        header => 'sharktools_core.h',
+        incpath => [
+            $sharktools_src,
+            $wireshark_src,
+            @inc,
+        ],
+    );
+
+    check_lib_or_exit(
+        lib => 'sharktools',
+        libpath => $sharktools_src,
+    );
+
+    for my $lib ( qw(glib-2.0 wireshark wiretap wsutil) ) {
+        check_lib_or_exit(
+            lib => $lib,
+            libpath => \@lib,
+        );
+    }
+}
+

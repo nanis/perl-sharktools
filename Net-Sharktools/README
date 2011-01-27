@@ -1,4 +1,4 @@
-Net-Sharktools version 0.001
+Net-Sharktools version 0.003
 ============================
 
 C<Net::Sharktools> is an adaptation of the Python interface provided with the
@@ -26,42 +26,36 @@ The build process for Sharktools requires you to install Wireshark and also
 have the full source tree for Wireshark accessible. You will need the same to
 build Sharktools as well.
 
-Currently, the C<Makefile.PL> for C<Net::Sharktools> makes not attempt to
+Currently, the C<Makefile.PL> for C<Net::Sharktools> makes no attempt to
 automatically deduce the locations for your WireShark and Sharktools
 distributions. You will need to edit C<Makefile.PL> to point both the compiler
 and linker to the correct locations.
 
-During development, I used the following directory tree:
+You can do that by specifying command line options when you generate the
+Makefile:
 
-$HOME/sharktools/wireshark-1.4.2
+    perl Makefile.PL --PREFIX=/install/path \
+        --sharktools-src /home/user/sharktools-0.1.5/src \
+        --wireshark-src /home/user/shark/wireshark-1.4.3 \
+        [ --lib-path /additional/library/paths ] \
+        [ --inc-path /additional/include/paths ]
 
-$HOME/sharktools/sharktools-0.1.5
+--inc-path and --lib-path are array valued options, so they can be specified
+multiple times on the command line.
 
-$HOME/sharktools/perlshark/Net-Sharktools
+You should definitely specify those (in addition to the Sharktools and
+Wireshark source directories) if you encounter any difficulties related to
+locating glib headers and/or glib and Wireshark libraries on your system.
 
-and put in C<Makefile.PL>
+I have use Devel::CheckLib to perform a sanity check prior to WriteMakefile
+using a select few headers and libraries. If the checks fail, no Makefile will
+be generated. Ensure that you have the requisite libraries installed, make sure
+you have built Sharktools according to its instructions prior to attempting to
+build Net::Sharktools, and specified the correct paths when invoking
+Makefile.PL.
 
-    LIBS  => [ join ' ', (
-        "-L$ENV{HOME}/sharktools/sharktools-0.1.5/src", qw(
-        -L/usr/lib
-        -lsharktools
-        -lglib-2.0
-        -lwireshark -lwiretap -lwsutil
-    ))],
-and
+Once a Makefile is generated, you can do:
 
-    INC => join(' ', qw(
-        -I.
-        -I/usr/include/glib-2.0
-        -I/usr/lib/glib-2.0/include
-    ),  "-I$ENV{HOME}/sharktools/wireshark-1.4.2",
-        "-I$ENV{HOME}/sharktools/wireshark-1.4.2/wiretap",
-        "-I$ENV{HOME}/sharktools/sharktools-0.1.5/src",
-    ),
-
-Once you have those paths set up, you can do
-
-    perl Makefile.PL PREFIX=/install/path
     make
     make test
     make install
