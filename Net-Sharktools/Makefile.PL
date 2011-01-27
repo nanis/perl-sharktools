@@ -38,6 +38,18 @@ unless ( defined $argv{'inc-path'} ) {
     )];
 }
 
+my $LIBS = join ' ', (
+    (map "-L$_", $argv{'sharktools-src'}, @{ $argv{'lib-path'} }),
+    (map "-l$_", qw(sharktools glib-2.0 wireshark wiretap wsutil)),
+);
+
+my $INC = join ' ', (map "-I$_", 
+    @{ $argv{'inc-path'} }, 
+    $argv{'wireshark-src'},
+    catfile($argv{'wireshark-src'}, 'wiretap'),
+    $argv{'sharktools-src'},
+);
+
 WriteMakefile(
     NAME              => 'Net::Sharktools',
     VERSION_FROM      => 'lib/Net/Sharktools.pm',
@@ -54,28 +66,10 @@ WriteMakefile(
       (ABSTRACT_FROM  => 'lib/Net/Sharktools.pm', 
        AUTHOR         => 'A. Sinan Unur <nanis@cpan.org>') : ()),
     
-    LIBS              => [ join ' ', 
-        (
-            map "-L$_", 
-                $argv{'sharktools-src'},
-                @{ $argv{'lib-path'} },
-        ),
-        (
-            map "-l$_", qw(
-                sharktools
-                glib-2.0
-                wireshark
-                wiretap
-                wsutil
-         ))],
+    LIBS              => [ $LIBS ],
     
     CCFLAGS           => '-Wall -Werror',
     DEFINE            => '', 
     
-    INC               => join(' ', map "-I$_",
-        @{ $argv{'inc-path'} },
-        $argv{'wireshark-src'},
-        catfile($argv{'wireshark-src'}, 'wiretap'),
-        $argv{'sharktools-src'},
-    ),
+    INC               => $INC,
 );
