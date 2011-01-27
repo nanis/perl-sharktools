@@ -120,7 +120,7 @@ v.0.1.5 is included in this module for your reference).
 C<Net::Sharktools> is almost a direct translation of the Python interface
 C<pyshark> included with Sharktools.
 
-==head1 BUILD and INSTALLATION
+=head1 BUILD and INSTALLATION
 
 Sharktools is closely coupled with the internals of Wireshark. Before
 attempting to build C<Net::Sharktools>, you should ensure that you are able to
@@ -207,8 +207,6 @@ L<http://www.wireshark.org>.
 
 =head1 ACKNOWLEDGEMENTS
 
-This work was commissioned by brian d foy and the Perl Review.
-
 The XS code is a straightforward translation of the Python interface provided in pyshark.c 
 
 =head1 AUTHOR
@@ -217,12 +215,11 @@ A. Sinan Unur, E<lt>nanis@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by A. Sinan Unur
+Copyright (C) 2011 by The Perl Review, LLC
 
 This work was sponsored by brian d foy and The Perl Review.
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.1 or,
-at your option, any later version of Perl 5 you may have available.
-
+it under the terms of The Artistic License 2.0. See
+http://www.perlfoundation.org/artistic_license_2_0
 
