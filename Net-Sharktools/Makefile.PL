@@ -2,6 +2,9 @@ use 5.008001;
 use ExtUtils::MakeMaker;
 use warnings; use strict;
 
+use lib qw(inc);
+use Devel::CheckLib;
+
 # No support for Win32 yet
 die "OS unsupported\n" if $^O eq 'MSWin32';
 
@@ -38,9 +41,12 @@ unless ( defined $argv{'inc-path'} ) {
     )];
 }
 
+my @LIBS = qw(sharktools glib-2.0 wireshark wiretap wsutil);
+my @HEADERS = qw(glib.h sharktools_core.h epan/ftypes/ftypes.h);
+
 my $LIBS = join ' ', (
     (map "-L$_", $argv{'sharktools-src'}, @{ $argv{'lib-path'} }),
-    (map "-l$_", qw(sharktools glib-2.0 wireshark wiretap wsutil)),
+    (map "-l$_", @LIBS),
 );
 
 my $INC = join ' ', (map "-I$_", 
@@ -49,6 +55,19 @@ my $INC = join ' ', (map "-I$_",
     catfile($argv{'wireshark-src'}, 'wiretap'),
     $argv{'sharktools-src'},
 );
+
+# Check some canaries to see if we have the required environment
+
+check_lib_or_exit(
+    lib => \@LIBS,
+    header => \@HEADERS,
+    LIBS => $LIBS,
+    INC => $INC,
+);
+
+
+
+
 
 WriteMakefile(
     NAME              => 'Net::Sharktools',
