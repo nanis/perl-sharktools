@@ -1,5 +1,9 @@
 Revision history for Perl extension Net::Sharktools.
 
+0.005 Fri Jan 28 00:44:46 2011 UTC
+    - POD fixes (copyright, formatting, spelling)
+    - Add LICENSE to WriteMakefile
+
 0.003 Thu Jan 27 13:06:14 2011
     - Add ability to specify Wireshark and Sharktools source directories and library paths on the Makefile.PL command line
     - Add Devel::CheckLib functionality to Makefile.PL

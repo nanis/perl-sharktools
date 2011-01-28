@@ -5,7 +5,7 @@ Makefile.PL
 MANIFEST
 ppport.h
 README
-README.sharktools-0.1.5
+README.sharktools-0.1.5.txt
 Sharktools.xs
 t/Net-Sharktools.t
 t/capture1.pcap
