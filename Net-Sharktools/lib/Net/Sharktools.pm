@@ -5,7 +5,7 @@ use warnings;
 use strict;
 use Carp;
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 $VERSION = eval $VERSION;
 
 require Exporter;
@@ -165,13 +165,13 @@ Once a Makefile is generated, you can do:
     make test
     make install
 
-=head2 EXPORT
+=head1 EXPORT
 
 The module does not export any functions by default. You can request either
 C<perlshark_read> which accepts arguments in a hash ref or as a flattened hash
 or C<perlshark_read_xs> which expects positional arguments.
 
-=head3 perlshark_read
+=head2 perlshark_read
 
 You can either pass the arguments to this function in a hashref or as a
 flattened hash. The function does some argument checking and passes the
@@ -194,11 +194,35 @@ The names of the fields to be extracted.
 
 Filter expressions to apply.
 
+=item decode_as
+
+From Sharktools README:
+
+Wireshark's packet dissection engine uses a combination of heuristics and
+convention to determine what dissector to use for a particular packet. For
+example, IP packets with TCP port 80 are, by default, parsed as HTTP packets.
+If you wish to have TCP port 800 packets parsed as HTTP packets, you need to
+tell the Wireshark engine your explicit intent.
+
+Wireshark adds a "decode as" feature in its GUI that allows for users to
+specify this mapping (Analyze Menu -> Decode As...).  Sharktools attempts to
+provide a basic interface to this feature as well.  By adding a 4th (optional)
+argument to both the matshark and pyshark commands, a user can achieve the
+desired effect.  For example, the following "decode as" string will parse TCP
+port 60000 packets as HTTP packets: 'tcp.port==60000,http
+
 =back
 
-=head3 perlshark_read_xs
+=head2 perlshark_read_xs
 
 This is the XS routine. It expects 3 or 4 positional arguments.
+
+    perlshark_read_xs(
+        $filename, 
+        [qw( field1 ... fieldn )],
+        $dfilter,
+        $decode_as, # optional
+    );
 
 =head1 SEE ALSO
 
