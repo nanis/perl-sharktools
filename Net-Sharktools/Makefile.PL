@@ -59,6 +59,7 @@ my $INC = join ' ', (map "-I$_",
 WriteMakefile(
     NAME              => 'Net::Sharktools',
     VERSION_FROM      => 'lib/Net/Sharktools.pm',
+    LICENSE           => 'artistic_2',
 
     BUILD_REQUIRES    => {
         'Config'                => 0,
