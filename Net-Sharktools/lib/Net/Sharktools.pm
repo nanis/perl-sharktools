@@ -133,8 +133,7 @@ build Sharktools as well.
 
 Currently, the C<Makefile.PL> for C<Net::Sharktools> makes no attempt to
 automatically deduce the locations for your WireShark and Sharktools
-distributions. You will need to edit C<Makefile.PL> to point both the compiler
-and linker to the correct locations.
+distributions. You will need to provide that information.
 
 You can do that by specifying command line options when you generate the
 Makefile:
@@ -145,14 +144,14 @@ Makefile:
         [ --lib-path /additional/library/paths ] \
         [ --inc-path /additional/include/paths ]
 
---inc-path and --lib-path are array valued options, so they can be specified
-multiple times on the command line.
+C<--inc-path> and C<--lib-path> are array valued options, so they can be
+specified multiple times on the command line.
 
 You should definitely specify those (in addition to the Sharktools and
 Wireshark source directories) if you encounter any difficulties related to
 locating glib headers and/or glib and Wireshark libraries on your system.
 
-I have use Devel::CheckLib to perform a sanity check prior to WriteMakefile
+I used C<Devel::CheckLib> to perform a sanity check prior to WriteMakefile
 using a select few headers and libraries. If the checks fail, no Makefile will
 be generated. Ensure that you have the requisite libraries installed, make sure
 you have built Sharktools according to its instructions prior to attempting to
