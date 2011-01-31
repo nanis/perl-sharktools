@@ -1,4 +1,4 @@
-Net-Sharktools version 0.005
+Net-Sharktools version 0.007
 ============================
 
 C<Net::Sharktools> is an adaptation of the Python interface provided with the
@@ -77,6 +77,5 @@ COPYRIGHT AND LICENSE
 Copyright (c) 2011 The Perl Review, LLC.
 
 This module is free software. You can redistribute it and/or modify it under
-the terms of Perl Artistic License 2.0
-http://www.perlfoundation.org/artistic_license_2_0
-
+the terms of GNU General Public License, version 2. See
+http://www.gnu.org/licenses/gpl-2.0.html

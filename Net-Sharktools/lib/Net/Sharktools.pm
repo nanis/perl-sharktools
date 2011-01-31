@@ -5,7 +5,7 @@ use warnings;
 use strict;
 use Carp;
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 $VERSION = eval $VERSION;
 
 require Exporter;
@@ -230,7 +230,8 @@ L<http://www.wireshark.org>.
 
 =head1 ACKNOWLEDGEMENTS
 
-The XS code is a straightforward translation of the Python interface provided in pyshark.c 
+The XS code is a straightforward translation of the Python interface provided
+in pyshark.c 
 
 =head1 AUTHOR
 
@@ -242,7 +243,6 @@ Copyright (C) 2011 by The Perl Review, LLC
 
 This work was sponsored by brian d foy and The Perl Review.
 
-This library is free software; you can redistribute it and/or modify
-it under the terms of The Artistic License 2.0. See
-http://www.perlfoundation.org/artistic_license_2_0
-
+This module is free software. You can redistribute it and/or modify it under
+the terms of GNU General Public License, version 2. See
+L<http://www.gnu.org/licenses/gpl-2.0.html>

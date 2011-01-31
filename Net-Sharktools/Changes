@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Sharktools.
 
+0.007 Mon Jan 31 2011
+    - Fix README and POD references to license terms
+
 0.006 Mon Jan 31 2011 
     - Release under GPLv2
 
