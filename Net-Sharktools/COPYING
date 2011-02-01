@@ -1,7 +1,7 @@
 This text consists of two parts:
 
-Part I: Some remakrs regarding the license
-Part II: The actual license that covers Net::Sharktools version 0.007
+Part I: Some remarks regarding the license
+Part II: The actual license that covers Net::Sharktools version 0.008
 
 When in doubt, Part II is the legally binding part, Part I is just there to
 make it easier for people that are not familiar with GPLv2.
@@ -10,7 +10,7 @@ make it easier for people that are not familiar with GPLv2.
 Part I:
 
 Both Wireshark and Sharktools are released under GPLv2. While earlier versions
-of Net::Sharktools were released under Artistic License v2, version 0.006 is
+of Net::Sharktools were released under Artistic License v2, version 0.008 is
 being released under GPLv2 so as not to cause confusion.
 
 There are no restrictions on the use of Net::Sharktools. There are restrictions
