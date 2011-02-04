@@ -5,7 +5,7 @@ use warnings;
 use strict;
 use Carp;
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 $VERSION = eval $VERSION;
 
 require Exporter;

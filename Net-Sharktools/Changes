@@ -1,5 +1,8 @@
 Revision history for Perl extension Net::Sharktools.
 
+0.009 Fri Feb 4 2011
+    - Fix license typo in Sharktools.xs
+
 0.008 Mon Jan 31 2011
     - Fix license typo in Makefile.PL
 
@@ -25,5 +28,5 @@ Revision history for Perl extension Net::Sharktools.
     - Remove unnecessary cast to (AV *)
 
 0.001 Thu Jan 20 2011 
-	- First public version
+    - First public version
 
